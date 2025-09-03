@@ -24,7 +24,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Set container name
-      run: echo "CONTAINER_NAME=task-preliminary-rainfall-monthly" >> $GITHUB_ENV
+      run: echo "CONTAINER_NAME=task-ascdp-preliminary-rainfall-monthly" >> $GITHUB_ENV
     - name: Get date and hash
       run: echo "TAG=$(date --iso-8601)-$(git rev-parse --short HEAD)" >> $GITHUB_ENV
     - name: Log in to the container registry

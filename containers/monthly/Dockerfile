@@ -1,5 +1,5 @@
-# Start with the Air Temperature Preliminary Aggregation Base.
-FROM ghcr.io/hcdp/task-preliminary-rainfall-base:2024-06-11-04152a0
+# Start with the Rainfall Preliminary Aggregation Base.
+FROM ghcr.io/hcdp/task-ascdp-preliminary-rainfall-base:latest
 LABEL org.opencontainers.image.source="https://github.com/hcdp/preliminary_rainfall"
 LABEL org.opencontainers.image.description="Monthly Air Temperature Aggregation and Mapping."
 

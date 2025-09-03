@@ -1,4 +1,4 @@
-FROM ghcr.io/hcdp/task-base:latest
+FROM ghcr.io/hcdp/task-ascdp-base:latest
 LABEL org.opencontainers.image.source="https://github.com/hcdp/preliminary_rainfall"
 LABEL org.opencontainers.image.description="Base Image for preliminary rainfall workflows."
 
