@@ -1,39 +1,26 @@
 # Start with the Rainfall Preliminary Aggregation Base.
 FROM ghcr.io/hcdp/task-ascdp-preliminary-rainfall-base:latest
-LABEL org.opencontainers.image.source="https://github.com/hcdp/preliminary_rainfall"
-LABEL org.opencontainers.image.description="Daily Air Temperature Aggregation and Mapping."
-
-RUN apt update
-RUN apt install -y ssh rsync
+LABEL org.opencontainers.image.source="https://github.com/hcdp/ascdp_preliminary_rainfall"
+LABEL org.opencontainers.image.description="American Samoa Daily Rainfall Aggregation and Mapping."
 
 # Pull the daily dependencies and extract them.
-RUN mkdir -p /home/hawaii_climate_products_container/preliminary/rainfall/dependencies
-WORKDIR /home/hawaii_climate_products_container/preliminary/rainfall/dependencies
-RUN wget -nv https://ikeauth.its.hawaii.edu/files/v2/download/public/system/ikewai-annotated-data/HCDP/workflow_data/preliminary/rainfall/dependencies/daily_dependencies.tar.gz
+RUN mkdir -p /workspace/code/as_static_files
+WORKDIR /workspace/code/as_static_files
+RUN wget -nv https://ikeauth.its.hawaii.edu/files/v2/download/public/system/ikewai-annotated-data/HCDP/ASCDP/workflow_data/preliminary/rainfall/dependencies/daily_dependencies.tar.gz
 RUN tar -xf daily_dependencies.tar.gz
 RUN rm daily_dependencies.tar.gz
 
-RUN mkdir -p /home/hawaii_climate_products_container/preliminary/rainfall/data_outputs
-ADD /data_outputs /home/hawaii_climate_products_container/preliminary/rainfall/data_outputs
 
-RUN mkdir -p /home/hawaii_climate_products_container/preliminary/rainfall/working_data
-ADD /working_data /home/hawaii_climate_products_container/preliminary/rainfall/working_data
-
-RUN mkdir -p /home/hawaii_climate_products_container/preliminary/rainfall/code/source
-ADD /code/source /home/hawaii_climate_products_container/preliminary/rainfall/code/source
-
-ADD /tools /sync
-
-RUN mkdir -p /home/hawaii_climate_products_container/preliminary/rainfall/code/daily
-ADD /code/daily /home/hawaii_climate_products_container/preliminary/rainfall/code/daily
+RUN mkdir -p workspace/code
+ADD /code/daily /workspace/code
 
 # Add upload config
 ADD /containers/daily/configs/upload.json /sync/config.json
 
 # Add the task wrapper script.
-ADD /containers/daily/task.sh /actor/task.sh
+ADD /containers/daily/task.sh /workspace/task.sh
 
-RUN wget https://raw.githubusercontent.com/ikewai/data-uploader/main/upload.py -O /sync/upload.py
 
+WORKDIR /workspace
 # This container is intended to run the task wrapper at launch, unless otherwise specified at run-time.
-CMD [ "/bin/bash", "/actor/task.sh" ]
+CMD [ "/bin/bash", "/task.sh" ]

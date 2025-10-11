@@ -5,12 +5,8 @@ on:
     branches:
     - "main"
     paths:
-    - "code/daily/**"
-    - "code/source/**"
-    - "containers/daily/**"
-    - "tools/**"
-    - "working_data/**"
-    - "data_outputs/**"
+    - .github/workflows/build-and-push-daily.yml
+    - "**/daily/**"
   workflow_run:
     workflows:
       - build_and_push_base

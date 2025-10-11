@@ -5,7 +5,9 @@ on:
     branches:
     - "main"
     paths:
+    - .github/workflows/build-and-push-base.yml
     - "containers/Dockerfile"
+    - "tools/**"
   repository_dispatch:
     types: [trigger-workflow]
   workflow_dispatch:
