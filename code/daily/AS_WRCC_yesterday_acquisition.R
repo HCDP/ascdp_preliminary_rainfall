@@ -11,9 +11,11 @@ mainDir <- Sys.getenv("PROJECT_ROOT")
 outDir <- paste0(mainDir,"/as_individual_data")
 
 # create output directory if it doesn't exist
-if (!dir.exists(outDir)) {
+if (dir.exists(outDir)) {
+  files_to_delete <- list.files(outDir, full.names = TRUE)
+  file.remove(files_to_delete)
+} else {
   dir.create(outDir, recursive = TRUE)
-  message("Created output directory: ", outDir)
 }
 
 #function to fetch precipitation for one station for a given date range
