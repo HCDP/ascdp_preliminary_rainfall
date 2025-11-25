@@ -12,9 +12,9 @@ rm(list = ls())#remove all objects in R
 
 #set dirs
 mainDir <- Sys.getenv("PROJECT_ROOT")
-statDir <- paste0(mainDir,"/as_static_files")
-inDir <- paste0(mainDir,"/as_gapfilled_data")
-source(paste0(mainDir,"/AS_RF_funcs.R")) # calls functions code
+statDir <- paste0(mainDir,"as_static_files")
+inDir <- paste0(mainDir,"as_gapfilled_data")
+source(paste0(mainDir,"AS_RF_funcs.R")) # calls functions code
 
 # Create output directories if they don't exist
 if (!dir.exists(paste0(mainDir,"/as_idw_rf_ras_NRT"))) 
@@ -175,4 +175,6 @@ if (!is.null(best_idw_rf)) {
 # finish day map
 e<-Sys.time()
 write(difftime(e,s,units="hours"),"tt.txt")
+
+
 
