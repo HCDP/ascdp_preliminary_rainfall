@@ -11,9 +11,18 @@ inDir<-paste0(mainDir,"/as_individual_data")
 outDir<-paste0(mainDir,"/as_combined_data")
 outDir2<-paste0(mainDir,"/as_gapfill_input")
 
-#ensure empty output dir
-unlink(file.path(outDir, "*"), recursive = TRUE)
-unlink(file.path(outDir2, "*"), recursive = TRUE)
+#ensure empty output dirs
+if (dir.exists(outDir)) {
+  file.remove(list.files(outDir, full.names = TRUE))
+} else {
+  dir.create(outDir, recursive = TRUE)
+}
+
+if (dir.exists(outDir2)) {
+  file.remove(list.files(outDir, full.names = TRUE))
+} else {
+  dir.create(outDir, recursive = TRUE)
+}
 
 #list csvs in input folder
 files <- list.files(
