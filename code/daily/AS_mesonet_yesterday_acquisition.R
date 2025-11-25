@@ -14,8 +14,13 @@ library(lubridate)
 mainDir <- Sys.getenv("PROJECT_ROOT")
 outDir<-paste0(mainDir,"/as_individual_data")
 
-#ensure empty output folder
-unlink(file.path(outDir, "*"), recursive = TRUE)
+# create an empty output directory
+if (dir.exists(outDir)) {
+  files_to_delete <- list.files(outDir, full.names = TRUE)
+  file.remove(files_to_delete)
+} else {
+  dir.create(outDir, recursive = TRUE)
+}
 
 #set API
 auth_token <- Sys.getenv("HCDP_API_TOKEN")
