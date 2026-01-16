@@ -33,7 +33,8 @@ RUN R -e 'install.packages("httr", version="1.4.7", repos="https://ftp.ussg.iu.e
 RUN R -e 'install.packages("lubridate", version="1.9.3", repos="https://ftp.ussg.iu.edu/CRAN/")'
 RUN R -e 'install.packages("jsonlite", version="1.8.7", repos="https://ftp.ussg.iu.edu/CRAN/")'
 
-
+RUN mkdir -p /workspace/envs
 RUN mkdir -p /sync
-ADD /tools /sync
+
 RUN wget https://raw.githubusercontent.com/ikewai/data-uploader/main/upload.py -O /sync/upload.py
+ADD /tools /sync

@@ -3,6 +3,8 @@ FROM ghcr.io/hcdp/task-ascdp-preliminary-rainfall-base:latest
 LABEL org.opencontainers.image.source="https://github.com/hcdp/ascdp_preliminary_rainfall"
 LABEL org.opencontainers.image.description="American Samoa Daily Rainfall Aggregation and Mapping."
 
+ADD /envs/daily/prod.env /workspace/envs
+
 # Pull the daily dependencies and extract them.
 RUN mkdir -p /workspace/as_static_files
 WORKDIR /workspace/as_static_files
