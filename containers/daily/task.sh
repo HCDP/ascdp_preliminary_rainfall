@@ -13,6 +13,10 @@ else
 fi
 echo "Aggregation date is: " $CUSTOM_DATE
 
+source /workspace/envs/prod.env
+
+cd /workspace/code
+
 echo "[task.sh] [2/8] Pulling Mesonet data"
 echo "--- begin AS_mesonet_yesterday_acquisition.R ---"
 Rscript AS_mesonet_yesterday_acquisition.R $CUSTOM_DATE
