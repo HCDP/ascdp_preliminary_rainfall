@@ -21,6 +21,7 @@ if (dir.exists(outDir)) {
 
 #set API
 auth_token <- Sys.getenv("HCDP_API_TOKEN")
+auth_header <- paste("Bearer", auth_token)
 station_ids <- c("1311", "1312", "1313", "1316", "1319")
 var_id <- "RF_1_Tot300s"
 tz_local <- "Pacific/Pago_Pago"
@@ -37,7 +38,7 @@ threshold <- ceiling(expected * 0.95)
 #pull station metadata
 resp_meta <- GET(
   "https://api.hcdp.ikewai.org/mesonet/db/stations",
-  add_headers(Authorization = auth_token),
+  add_headers(Authorization = auth_header),
   query = list(location = "american_samoa")
 )
 
@@ -81,7 +82,7 @@ for (station in station_ids) {
   
   resp <- GET(
     "https://api.hcdp.ikewai.org/mesonet/db/measurements",
-    add_headers(Authorization = auth_token),
+    add_headers(Authorization = auth_header),
     query = list(
       station_ids = station,
       var_ids     = var_id,
