@@ -12,9 +12,10 @@ rm(list = ls())#remove all objects in R
 
 #set dirs
 mainDir <- Sys.getenv("PROJECT_ROOT")
+codeDir<-Sys.getenv("CODE_DIR")
 statDir <- paste0(mainDir,"as_static_files")
 inDir <- paste0(mainDir,"as_gapfilled_data")
-source(paste0(mainDir,"AS_RF_funcs.R")) # calls functions code
+source(paste0(codeDir,"AS_RF_funcs.R")) # calls functions code
 
 # Create output directories if they don't exist
 if (!dir.exists(paste0(mainDir,"/as_idw_rf_ras_NRT"))) 
@@ -40,7 +41,7 @@ s<-Sys.time()
 csv_file <- csv_files[1]
 
 #define date
-source(paste0(mainDir,"/as_dataDateFunc.R"))
+source(paste0(codeDir,"/as_dataDateFunc.R"))
 date<-dataDateMkr() #function for importing/defining date as input or as yesterday
 date_str <- format(as.Date(date), "%Y%m%d")
 

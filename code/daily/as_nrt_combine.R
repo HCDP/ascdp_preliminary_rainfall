@@ -7,6 +7,7 @@ library(stringr)
 
 #set dirs
 mainDir <- Sys.getenv("PROJECT_ROOT")
+codeDir<-Sys.getenv("CODE_DIR")
 inDir<-paste0(mainDir,"/as_individual_data")
 outDir<-paste0(mainDir,"/as_combined_data")
 outDir2<-paste0(mainDir,"/as_gapfill_input")
@@ -32,7 +33,7 @@ files <- list.files(
 )
 
 #define date
-source(paste0(mainDir,"/as_dataDateFunc.R"))
+source(paste0(codeDir,"/as_dataDateFunc.R"))
 dataDate<-dataDateMkr() #function for importing/defining date as input or as yesterday
 file_date <-dataDate #dataDate as currentDate
 

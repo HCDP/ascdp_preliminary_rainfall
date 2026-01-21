@@ -8,6 +8,7 @@ library(lubridate)
 
 #set dirs
 mainDir <- Sys.getenv("PROJECT_ROOT")
+codeDir<-Sys.getenv("CODE_DIR")
 outDir<-paste0(mainDir,"/as_individual_data")
 
 # create an empty output directory
@@ -25,7 +26,7 @@ var_id <- "RF_1_Tot300s"
 tz_local <- "Pacific/Pago_Pago"
 
 #define date
-source(paste0(mainDir,"/as_dataDateFunc.R"))
+source(paste0(codeDir,"/as_dataDateFunc.R"))
 dataDate<-dataDateMkr() #function for importing/defining date as input or as yesterday
 currentDate<-dataDate #dataDate as currentDate
 

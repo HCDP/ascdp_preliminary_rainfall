@@ -8,6 +8,7 @@ rm(list = ls())
 
 #set dirs
 mainDir<-Sys.getenv("PROJECT_ROOT")
+codeDir<-Sys.getenv("CODE_DIR")
 inDir<-paste0(mainDir,"/as_static_files/as_gapfill_correlation_inputs")
 inDir2<-paste0(mainDir,"/as_gapfill_input")
 outDir<-paste0(mainDir,"/as_gapfilled_data")
@@ -24,7 +25,7 @@ Files =list.files(inDir) #Gets the names of all the files in your WorkingFolder
 nFiles=length(Files) #Counts the number of files to be processed
 
 #define date
-source(paste0(mainDir,"/as_dataDateFunc.R"))
+source(paste0(codeDir,"/as_dataDateFunc.R"))
 dataDate<-dataDateMkr() #function for importing/defining date as input or as yesterday
 currentDate<-dataDate #dataDate as currentDate
 file_date<-format(as.Date(currentDate), "%Y%m%d")
