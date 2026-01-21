@@ -1,9 +1,5 @@
 ###### American Samoa Rainfall Data Acquisition - UH Mesonet
 
-rm(list = ls())  # Remove all objects
-lapply(paste0("package:", names(sessionInfo()$otherPkgs)), detach, character.only = TRUE, unload = TRUE)
-gc()  # Run garbage collection to clean memory
-
 #load packages
 library(httr)
 library(jsonlite)
