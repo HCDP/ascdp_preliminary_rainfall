@@ -11,3 +11,5 @@ dependencies/**
 **/*.html
 **/*.gz*
 **/*.gz
+**/as_static_files
+**/as_idw_rf_*_NRT
