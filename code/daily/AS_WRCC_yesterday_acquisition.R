@@ -11,11 +11,16 @@ mainDir <- Sys.getenv("PROJECT_ROOT")
 codeDir<-Sys.getenv("CODE_DIR")
 outDir <- paste0(mainDir,"/as_individual_data")
 
-# create output directory if it doesn't exist
-if (dir.exists(outDir)) {
-  files_to_delete <- list.files(outDir, full.names = TRUE)
-  file.remove(files_to_delete)
-} else {
+# # create output directory if it doesn't exist
+# if (dir.exists(outDir)) {
+#   files_to_delete <- list.files(outDir, full.names = TRUE)
+#   file.remove(files_to_delete)
+# } else {
+#   dir.create(outDir, recursive = TRUE)
+# }
+
+# Add to existing folder, or create new one if there is none already
+if (!dir.exists(outDir)) {
   dir.create(outDir, recursive = TRUE)
 }
 
