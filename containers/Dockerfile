@@ -32,6 +32,8 @@ RUN R -e 'install.packages("stringr", version="1.5.2", repos="https://ftp.ussg.i
 RUN R -e 'install.packages("httr", version="1.4.7", repos="https://ftp.ussg.iu.edu/CRAN/")'
 RUN R -e 'install.packages("lubridate", version="1.9.3", repos="https://ftp.ussg.iu.edu/CRAN/")'
 RUN R -e 'install.packages("jsonlite", version="1.8.7", repos="https://ftp.ussg.iu.edu/CRAN/")'
+RUN R -e 'install.packages("jsonlite", version="1.8.7", repos="https://ftp.ussg.iu.edu/CRAN/")'
+RUN R -e 'install.packages("matrixStats", version="1.5.0", repos="https://cloud.r-project.org/")'
 
 RUN mkdir -p /workspace/envs
 RUN mkdir -p /sync
