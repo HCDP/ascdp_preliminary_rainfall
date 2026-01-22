@@ -13,9 +13,9 @@ rm(list = ls())#remove all objects in R
 #set dirs
 mainDir <- Sys.getenv("PROJECT_ROOT")
 codeDir<-Sys.getenv("CODE_DIR")
-statDir <- paste0(mainDir,"as_static_files")
-inDir <- paste0(mainDir,"as_gapfilled_data")
-source(paste0(codeDir,"AS_RF_funcs.R")) # calls functions code
+statDir <- paste0(mainDir,"/as_static_files")
+inDir <- paste0(mainDir,"/as_gapfilled_data")
+source(paste0(codeDir,"/AS_RF_funcs.R")) # calls functions code
 
 # Create output directories if they don't exist
 if (!dir.exists(paste0(mainDir,"/as_idw_rf_ras_NRT"))) 
