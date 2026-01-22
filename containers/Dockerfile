@@ -35,6 +35,7 @@ RUN R -e 'install.packages("jsonlite", version="1.8.7", repos="https://ftp.ussg.
 RUN R -e 'install.packages("jsonlite", version="1.8.7", repos="https://ftp.ussg.iu.edu/CRAN/")'
 RUN R -e 'install.packages("matrixStats", version="1.5.0", repos="https://cloud.r-project.org/")'
 RUN R -e 'install.packages("geosphere", version="	1.5-20", repos="https://cloud.r-project.org/")'
+RUN R -e 'install.packages("tidyr", version="	1.3.2", repos="https://cloud.r-project.org/")'
 
 
 RUN mkdir -p /workspace/envs
