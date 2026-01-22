@@ -22,7 +22,7 @@ if (dir.exists(outDir)) {
 if (dir.exists(outDir2)) {
   file.remove(list.files(outDir, full.names = TRUE))
 } else {
-  dir.create(outDir, recursive = TRUE)
+  dir.create(outDir2, recursive = TRUE)
 }
 
 #list csvs in input folder
