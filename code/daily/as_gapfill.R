@@ -9,9 +9,12 @@ rm(list = ls())
 #set dirs
 mainDir<-Sys.getenv("PROJECT_ROOT")
 codeDir<-Sys.getenv("CODE_DIR")
-inDir<-paste0(mainDir,"/as_static_files/as_gapfill_correlation_inputs")
-inDir2<-paste0(mainDir,"/as_gapfill_input")
-outDir<-paste0(mainDir,"/as_gapfilled_data")
+outputDir<-Sys.getenv("OUTPUT_DIR")
+dependencyDir<-Sys.getenv("DEPENDENCY_DIR")
+
+inDir<-paste0(dependencyDir,"/as_gapfill_correlation_inputs")
+inDir2<-paste0(outputDir,"/as_gapfill_input")
+outDir<-paste0(outputDir,"/as_gapfilled_data")
 
 #ensure empty output dir
 if (dir.exists(outDir)) {
@@ -123,7 +126,7 @@ colnames(RF_DAY)[1] <- "Name"
 
     #format for interpolation input
       #read in template
-      temp<-read.csv(paste0(mainDir,"/as_static_files/as_rf_idw_input_template.csv"))
+      temp<-read.csv(paste0(dependencyDir,"/as_rf_idw_input_template.csv"))
       
       #add rf values in
       temp$total_rf_mm <- RF_long$precip_mm[match(temp$Station.Name, RF_long$station_name)]

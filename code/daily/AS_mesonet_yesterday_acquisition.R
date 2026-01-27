@@ -7,9 +7,12 @@ library(dplyr)
 library(lubridate)
 
 #set dirs
-mainDir <- Sys.getenv("PROJECT_ROOT")
+mainDir<-Sys.getenv("PROJECT_ROOT")
 codeDir<-Sys.getenv("CODE_DIR")
-outDir<-paste0(mainDir,"/as_individual_data")
+outputDir<-Sys.getenv("OUTPUT_DIR")
+dependencyDir<-Sys.getenv("DEPENDENCY_DIR")
+
+outDir<-paste0(outputDir,"/as_individual_data")
 
 # create an empty output directory
 if (dir.exists(outDir)) {

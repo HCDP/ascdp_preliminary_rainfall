@@ -6,11 +6,14 @@ library(readr)
 library(stringr)
 
 #set dirs
-mainDir <- Sys.getenv("PROJECT_ROOT")
+mainDir<-Sys.getenv("PROJECT_ROOT")
 codeDir<-Sys.getenv("CODE_DIR")
-inDir<-paste0(mainDir,"/as_individual_data")
-outDir<-paste0(mainDir,"/as_combined_data")
-outDir2<-paste0(mainDir,"/as_gapfill_input")
+outputDir<-Sys.getenv("OUTPUT_DIR")
+dependencyDir<-Sys.getenv("DEPENDENCY_DIR")
+
+inDir<-paste0(outputDir,"/as_individual_data")
+outDir<-paste0(outputDir,"/as_combined_data")
+outDir2<-paste0(outputDir,"/as_gapfill_input")
 
 #ensure empty output dirs
 if (dir.exists(outDir)) {
@@ -90,7 +93,7 @@ cat("Combined file saved to:", output_file, "\n")
 
 ###reformat for gapfilling input
   #read template
-  temp<-read.csv(paste0(mainDir,"/as_static_files/as_daily_wide_template.csv"))
+  temp<-read.csv(paste0(dependencyDir,"/as_daily_wide_template.csv"))
 
   #convert date to MM/DD/YYYY format and replace column name
   file_date_fmt2<-format(as.Date(file_date),"%m/%d/%Y")

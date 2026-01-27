@@ -11,10 +11,12 @@ library(Metrics)
 rm(list = ls())#remove all objects in R
 
 #set dirs
-mainDir <- Sys.getenv("PROJECT_ROOT")
+mainDir<-Sys.getenv("PROJECT_ROOT")
 codeDir<-Sys.getenv("CODE_DIR")
-statDir <- paste0(mainDir,"/as_static_files")
-inDir <- paste0(mainDir,"/as_gapfilled_data")
+outputDir<-Sys.getenv("OUTPUT_DIR")
+dependencyDir<-Sys.getenv("DEPENDENCY_DIR")
+
+inDir <- paste0(outputDir,"/as_gapfilled_data")
 source(paste0(codeDir,"/AS_RF_funcs.R")) # calls functions code
 
 # Create output directories if they don't exist
@@ -28,9 +30,9 @@ if (!dir.exists(paste0(mainDir,"/as_idw_rf_table_NRT")))
   dir.create(paste0(mainDir,"/as_idw_rf_table_NRT"))
 
 # Load static data
-ASmask <- raster(paste0(statDir,"/as_mask3.tif"))
-AScoast <- st_read(paste0(statDir,"/as_coastline.shp"))
-temp <- read.csv(paste0(statDir,"/as_rf_idw_input_template.csv"))
+ASmask <- raster(paste0(dependencyDir,"/as_mask3.tif"))
+AScoast <- st_read(paste0(dependencyDir,"/as_coastline.shp"))
+temp <- read.csv(paste0(dependencyDir,"/as_rf_idw_input_template.csv"))
 
 # List all CSV files for each day
 csv_files <- list.files(inDir, pattern = "\\.csv$", full.names = TRUE)
@@ -47,7 +49,7 @@ date_str <- format(as.Date(date), "%Y%m%d")
 
 # Load PRISM raster for corresponding month
 month <- format(date, "%m")
-ASmeanRFday <- raster(paste0(statDir,"/as_prism_monthday/daily_", month, "_mm.tif"))
+ASmeanRFday <- raster(paste0(dependencyDir,"/as_prism_monthday/daily_", month, "_mm.tif"))
 
 # Load daily rainfall station data
 rfSta <- read.csv(csv_file)
