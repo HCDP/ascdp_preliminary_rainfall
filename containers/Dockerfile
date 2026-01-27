@@ -17,8 +17,8 @@ RUN apt install -y libgdal-dev gdal-bin
 RUN apt install -y libxtst-dev libxt6 libxrender1
 RUN apt install -y libudunits2-dev
 RUN apt install -y r-base
-# RUN apt install -y ghostscript
-# RUN apt install -y cmake
+RUN apt install -y ghostscript
+RUN apt install -y cmake
 
 WORKDIR /build
 
