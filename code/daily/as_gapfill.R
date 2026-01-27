@@ -7,7 +7,6 @@ library(tidyr)
 rm(list = ls())
 
 #set dirs
-mainDir<-Sys.getenv("PROJECT_ROOT")
 codeDir<-Sys.getenv("CODE_DIR")
 outputDir<-Sys.getenv("OUTPUT_DIR")
 dependencyDir<-Sys.getenv("DEPENDENCY_DIR")

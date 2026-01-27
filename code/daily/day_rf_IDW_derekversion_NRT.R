@@ -11,7 +11,6 @@ library(Metrics)
 rm(list = ls())#remove all objects in R
 
 #set dirs
-mainDir<-Sys.getenv("PROJECT_ROOT")
 codeDir<-Sys.getenv("CODE_DIR")
 outputDir<-Sys.getenv("OUTPUT_DIR")
 dependencyDir<-Sys.getenv("DEPENDENCY_DIR")
@@ -20,14 +19,11 @@ inDir <- paste0(outputDir,"/as_gapfilled_data")
 source(paste0(codeDir,"/AS_RF_funcs.R")) # calls functions code
 
 # Create output directories if they don't exist
-if (!dir.exists(paste0(mainDir,"/as_idw_rf_ras_NRT"))) 
-  dir.create((paste0(mainDir,"/as_idw_rf_ras_NRT")))
-if (!dir.exists(paste0(mainDir,"/as_idw_rf_meta_NRT"))) 
-  dir.create(paste0(mainDir,"/as_idw_rf_meta_NRT"))
-if (!dir.exists(paste0(mainDir,"/as_idw_rf_maps_NRT"))) 
-  dir.create(paste0(mainDir,"/as_idw_rf_maps_NRT"))
-if (!dir.exists(paste0(mainDir,"/as_idw_rf_table_NRT"))) 
-  dir.create(paste0(mainDir,"/as_idw_rf_table_NRT"))
+outDirs <- c(paste0(outputDir, "/as_idw_rf_ras_NRT"), paste0(outputDir,"/as_idw_rf_meta_NRT"), paste0(outputDir,"/as_idw_rf_table_NRT"), paste0(outputDir,"/as_idw_rf_maps_NRT"))
+for(outDir in outDirs) {
+  if (!dir.exists(outDir)) 
+    dir.create(outDir)
+}
 
 # Load static data
 ASmask <- raster(paste0(dependencyDir,"/as_mask3.tif"))
@@ -87,16 +83,16 @@ if (!is.null(best_idw_rf)) {
   best_idw_rf <- reclassify(best_idw_rf, cbind(NA, NA, -9999))
   
   # Save raster
-  raster_outfile <- paste0(mainDir,"/as_idw_rf_ras_NRT/as_idw_", date_str, ".tif")
+  raster_outfile <- paste0(outDirs[1], "/as_idw_", date_str, ".tif")
   writeRaster(best_idw_rf, raster_outfile, overwrite = TRUE)
 
   # Save metadata as a tab-separated text file
-  meta_outfile <- paste0(mainDir,"/as_idw_rf_meta_NRT/as_idw_meta_", date_str, ".txt")
+  meta_outfile <- paste0(outDirs[2],"/as_idw_meta_", date_str, ".txt")
   write.table(metadata, meta_outfile, sep = "\t", row.names = FALSE, quote = FALSE)
   
   # Append to monthly data file for map-viewer display
     # Define monthly file name (based on year + month)
-    month_file <- paste0(mainDir, "/as_idw_rf_table_NRT/daily_rainfall_station_AS_",
+    month_file <- paste0(outDirs[3], "/daily_rainfall_station_AS_",
                          format(date, "%Y_%m"), ".csv")
 
     # Column name from date
@@ -144,7 +140,7 @@ if (!is.null(best_idw_rf)) {
     }
     
   # Prepare plot
-  png(filename = paste0(mainDir,"/as_idw_rf_maps_NRT/as_idw_map_", date_str, ".png")
+  png(filename = paste0(outDirs[4],"/as_idw_map_", date_str, ".png")
       , width = 600, height = 400
       )
   # par(mar = c(4, 4, 4, 6))  # Give some room for subtext
