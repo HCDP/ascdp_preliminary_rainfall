@@ -14,7 +14,7 @@
 	"upload":
 	[
         {
-            "local_path": "/workspace/as_idw_rf_maps_NRT/as_idw_%y%m%d.tif",
+            "local_path": "/workspace/as_idw_rf_ras_NRT/as_idw_%y%m%d.tif",
             "remote_path": "HCDP/ASCDP/production/rainfall/day/data_map/%y/%m",
             "rename": "rainfall_day_data_map_%y_%m_%d.tif",
             "system_id": "ikewai-annotated-data"
