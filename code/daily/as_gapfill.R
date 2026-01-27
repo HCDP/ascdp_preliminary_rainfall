@@ -130,5 +130,5 @@ colnames(RF_DAY)[1] <- "Name"
       
     #write csv
     output_file <- paste0(outDir,"/",file_date, "_as_rf_idw_input_gapfilled.csv")
-    write_csv(temp, output_file)
+    write.csv(temp, output_file)
     cat("File saved to:", output_file, "\n")
