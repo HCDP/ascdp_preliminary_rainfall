@@ -84,7 +84,7 @@ if (!is.null(best_idw_rf)) {
   
   # Save raster
   raster_outfile <- paste0(outDirs[1], "/as_idw_", date_str, ".tif")
-  writeRaster(best_idw_rf, raster_outfile, overwrite = TRUE)
+  writeRaster(best_idw_rf, raster_outfile, NAflag = -9999, overwrite = TRUE)
 
   # Save metadata as a tab-separated text file
   meta_outfile <- paste0(outDirs[2],"/as_idw_meta_", date_str, ".txt")
