@@ -16,7 +16,9 @@
             "start_date": "%y-%m-%d", 
             "end_date": "%y-%m-%d",
             "fill": "partial",
-            "additional_properties": {},
+            "additional_properties": {
+                "location": "american_samoa"
+            },
             "additional_key_properties": [],
             "files": [
                 "https://ikeauth.its.hawaii.edu/files/v2/download/public/system/ikewai-annotated-data/HCDP/ASCDP/production/rainfall/day/partial/station_data/%y/%m/rainfall_day_partial_station_data_%y_%m.csv"
