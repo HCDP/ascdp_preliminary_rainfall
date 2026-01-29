@@ -22,7 +22,7 @@ if (dir.exists(outDir)) {
 }
 
 if (dir.exists(outDir2)) {
-  file.remove(list.files(outDir, full.names = TRUE))
+  file.remove(list.files(outDir2, full.names = TRUE))
 } else {
   dir.create(outDir2, recursive = TRUE)
 }
