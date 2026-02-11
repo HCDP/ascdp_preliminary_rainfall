@@ -13,6 +13,7 @@ dependencyDir<-Sys.getenv("DEPENDENCY_DIR")
 inDir<-paste0(outputDir,"/as_individual_data")
 outDir<-paste0(outputDir,"/as_combined_data")
 outDir2<-paste0(outputDir,"/as_gapfill_input")
+outDir3<-paste0(outputDir,"/as_qc_logs")
 
 #ensure empty output dirs
 if (dir.exists(outDir)) {
@@ -25,6 +26,11 @@ if (dir.exists(outDir2)) {
   file.remove(list.files(outDir2, full.names = TRUE))
 } else {
   dir.create(outDir2, recursive = TRUE)
+}
+
+# QC log output folder
+if (!dir.exists(outDir3)) {
+  dir.create(outDir3, recursive = TRUE)
 }
 
 #list csvs in input folder
@@ -83,6 +89,39 @@ meso_goal <- meso_combined %>%
     y = NA_real_,
     RF_Mean_Extract = NA_real_,
     total_rf_mm_logC = NA_real_
+  )
+
+###Identify and screen for unlikely rainfall values 
+  # Add QC flags
+  meso_goal <- meso_goal %>%
+    mutate(
+      qc_flag = case_when(
+        total_rf_mm < 0 ~ "NEGATIVE",
+        total_rf_mm > 800 ~ "OVER_800MM",
+        total_rf_mm > 500 ~ "OVER_500MM",
+        TRUE ~ "OK"
+      )
+  )
+
+  # Extract flagged rows (anything not OK)
+  qc_log <- meso_goal %>%
+    filter(qc_flag != "OK") %>%
+    mutate(date = file_date) %>%
+    select(date, SKN, Station.Name, total_rf_mm, qc_flag, LAT, LON)
+  
+  # Only write file if there are flagged rows
+  if (nrow(qc_log) > 0) {
+    qc_log_file <- paste0(outDir3, "/as_qc_flagged_", file_date_fmt, ".csv")
+    write.csv(qc_log, qc_log_file, row.names = FALSE)
+    message("QC log written: ", qc_log_file)
+  } else {
+    message("No QC issues found for ", file_date)
+  }
+  
+# Replace flagged values with NA for interpolation
+meso_goal <- meso_goal %>%
+  mutate(
+    total_rf_mm = ifelse(qc_flag == "OK", total_rf_mm, NA)
   )
 
 #write csv
