@@ -118,10 +118,14 @@ meso_goal <- meso_combined %>%
     message("No QC issues found for ", file_date)
   }
   
-# Replace flagged values with NA for interpolation
+# Replace negative and over 800mm values with NA for interpolation
 meso_goal <- meso_goal %>%
   mutate(
-    total_rf_mm = ifelse(qc_flag == "OK", total_rf_mm, NA)
+    total_rf_mm = ifelse(
+      qc_flag %in% c("NEGATIVE", "OVER_800MM"),
+      NA,
+      total_rf_mm
+    )
   )
 
 #write csv
