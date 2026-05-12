@@ -89,54 +89,52 @@ if (!is.null(best_idw_rf)) {
   meta_outfile <- paste0(outDirs[2],"/as_idw_meta_", date_str, ".txt")
   write.table(metadata, meta_outfile, sep = "\t", row.names = FALSE, quote = FALSE)
   
-  # Append to monthly data file for map-viewer display
-    # Define monthly file name (based on year + month)
-    month_file <- paste0(outDirs[3], "/daily_rainfall_station_AS_",
-                         format(date, "%Y_%m"), ".csv")
-
-    # Column name from date
-    col_name <- paste0("X", format(date, "%Y.%m.%d"))
-
-    # Join daily data into template
-    temp_out <- temp
-    temp_out$total_rf_mm <- rfSta$total_rf_mm[match(temp_out$SKN, rfSta$SKN)]
-    names(temp_out)[names(temp_out) == "total_rf_mm"] <- col_name
-    temp_out <- temp_out[, -((ncol(temp_out)-3):ncol(temp_out))]  # remove trailing metadata columns
+  # --- START OF MONTHLY TABLE PROCESSING ---
+  # 1. Define monthly file name
+  month_file <- paste0(outDirs[3], "/daily_rainfall_station_AS_", 
+                       format(date, "%Y_%m"), ".csv")
   
-    # If monthly file already exists, update it
-    if (file.exists(month_file)) {
-      existing <- read.csv(month_file, check.names = FALSE)
-
-      # If column for this date already exists, drop it first (to overwrite cleanly)
-      if (col_name %in% names(existing)) {
-        existing[[col_name]] <- NULL
-      }
-
-      # Merge new data (keeps order by SKN)
-      combined <- merge(existing, temp_out[, c("SKN", col_name)], by = "SKN", all.x = TRUE)
-
-      # Identify columns in format XYYYY.MM.DD
-      date_cols <- grep("^X[0-9]{4}\\.[0-9]{2}\\.[0-9]{2}$", names(combined), value = TRUE)
-      static_cols <- setdiff(names(combined), date_cols)
-      
-      # Convert to Date for proper sorting
-      date_values <- as.Date(gsub("^X", "", date_cols), format = "%Y.%m.%d")
-      
-      # Sort by date
-      sorted_dates <- date_cols[order(date_values)]
-      
-      # Recombine static and sorted date columns
-      combined <- combined[, c(static_cols, sorted_dates)]
-
-      # Overwrite file with updated data
-      write.csv(combined, month_file, row.names = FALSE)
-      message("Updated existing monthly file (", col_name, " overwritten or added): ", month_file)
-      
-    } else {
-      # If file doesn't exist yet, create new one
-      write.csv(temp_out, month_file, row.names = FALSE)
-      message("Created new monthly file: ", month_file)
+  # 2. Prepare the new day's data
+  col_name <- paste0("X", format(date, "%Y.%m.%d"))
+  new_day_data <- rfSta %>%
+    dplyr::select(SKN, total_rf_mm) %>%
+    dplyr::rename(!!col_name := total_rf_mm)
+    
+  # 3. Handle the Monthly File (Join to existing or start clean)
+  if (file.exists(month_file)) {
+    existing_month <- read.csv(month_file, check.names = FALSE)
+    
+    if (col_name %in% names(existing_month)) {
+      existing_month[[col_name]] <- NULL
     }
+    
+    updated_month <- left_join(existing_month, new_day_data, by = "SKN")
+  } else {
+    # Strip out x, y, RF_Mean_Extract, and any old date columns from template
+    temp_clean <- temp %>% 
+      dplyr::select(-matches("total_rf_mm|X[0-9]{4}|x|y|RF_Mean_Extract"))
+    
+    updated_month <- left_join(temp_clean, new_day_data, by = "SKN")
+    message("Created new monthly file from template.")
+  }
+
+  # 4. Final Formatting: Remove unwanted columns, sort, and force NA values
+  # Safety removal of extra columns if they snuck in
+  updated_month <- updated_month %>% 
+    dplyr::select(-any_of(c("x", "y", "RF_Mean_Extract")))
+  
+  date_cols <- grep("^X[0-9]{4}\\.[0-9]{2}\\.[0-9]{2}$", names(updated_month), value = TRUE)
+  static_cols <- setdiff(names(updated_month), date_cols)
+  sorted_dates <- date_cols[order(as.Date(gsub("^X", "", date_cols), format = "%Y.%m.%d"))]
+  
+  final_table <- updated_month[, c(static_cols, sorted_dates)]
+  
+  # Force all empty strings to NA
+  final_table[final_table == ""] <- NA
+  
+  # 5. Save the CSV with explicit NA strings for IT ingestor
+  write.csv(final_table, month_file, row.names = FALSE, na = "NA")
+  message("Updated existing monthly file (", col_name, " overwritten or added): ", month_file)
     
   # Prepare plot
   png(filename = paste0(outDirs[4],"/as_idw_map_", date_str, ".png")
