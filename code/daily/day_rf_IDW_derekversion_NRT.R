@@ -98,28 +98,39 @@ if (!is.null(best_idw_rf)) {
   col_name <- paste0("X", format(date, "%Y.%m.%d"))
   new_day_data <- rfSta %>%
     dplyr::select(SKN, total_rf_mm) %>%
+    mutate(SKN = as.character(SKN)) %>%
     dplyr::rename(!!col_name := total_rf_mm)
     
   # 3. Handle the Monthly File (Join to existing or start clean)
   if (file.exists(month_file)) {
-    existing_month <- read.csv(month_file, check.names = FALSE)
+    existing_month <- read.csv(month_file, check.names = FALSE, stringsAsFactors = FALSE)
     
+    # Force SKN to character to match new_day_data
+    existing_month$SKN <- as.character(existing_month$SKN)
+    
+    # Hard deduplication: remove TODAY's column if it already exists
     if (col_name %in% names(existing_month)) {
-      existing_month[[col_name]] <- NULL
+      existing_month <- existing_month[, names(existing_month) != col_name, drop = FALSE]
     }
     
+    # DIAGNOSTIC LOG: Print existing columns before join
+    message("Existing file found with ", ncol(existing_month), " columns.")
+    
+    # JOIN
     updated_month <- left_join(existing_month, new_day_data, by = "SKN")
+    message("Appending data for: ", col_name)
+    
   } else {
-    # Strip out x, y, RF_Mean_Extract, and any old date columns from template
+    # No file exists: Start clean from template
     temp_clean <- temp %>% 
+      mutate(SKN = as.character(SKN)) %>%
       dplyr::select(-matches("total_rf_mm|X[0-9]{4}|x|y|RF_Mean_Extract"))
     
     updated_month <- left_join(temp_clean, new_day_data, by = "SKN")
-    message("Created new monthly file from template.")
+    message("No existing file found. Created new monthly file from template.")
   }
 
   # 4. Final Formatting: Remove unwanted columns, sort, and force NA values
-  # Safety removal of extra columns if they snuck in
   updated_month <- updated_month %>% 
     dplyr::select(-any_of(c("x", "y", "RF_Mean_Extract")))
   
@@ -129,13 +140,14 @@ if (!is.null(best_idw_rf)) {
   
   final_table <- updated_month[, c(static_cols, sorted_dates)]
   
-  # Force all empty strings to NA
+  # Final NA force: Handles empty strings and logical NAs
   final_table[final_table == ""] <- NA
   
-  # 5. Save the CSV with explicit NA strings for IT ingestor
+  # 5. Save with explicit NA strings
   write.csv(final_table, month_file, row.names = FALSE, na = "NA")
-  message("Updated existing monthly file (", col_name, " overwritten or added): ", month_file)
-    
+  message("Monthly file update complete. Saved columns: ", ncol(final_table))
+  # --- END OF MONTHLY TABLE PROCESSING ---
+  
   # Prepare plot
   png(filename = paste0(outDirs[4],"/as_idw_map_", date_str, ".png")
       , width = 600, height = 400
