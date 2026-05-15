@@ -119,12 +119,11 @@ if (!is.null(best_idw_rf)) {
   
   if (download_status && file.exists(local_path)) {
     message("File retrieved successfully from API: ", url)
-    
+
     # Read the downloaded file
     existing_month <- read.csv(local_path, check.names = FALSE, stringsAsFactors = FALSE)
     existing_month$SKN <- as.character(existing_month$SKN)
-    
-    # Remove today's column if it somehow exists to prevent duplicates
+
     if (col_name %in% names(existing_month)) {
       existing_month <- existing_month[, names(existing_month) != col_name, drop = FALSE]
     }
@@ -159,7 +158,7 @@ if (!is.null(best_idw_rf)) {
   message("Update complete. File saved to: ", local_path, " (Columns: ", ncol(final_table), ")")
   
   # --- END OF MONTHLY TABLE PROCESSING ---
-    
+
   # Prepare plot
   png(filename = paste0(outDirs[4],"/as_idw_map_", date_str, ".png")
       , width = 600, height = 400
