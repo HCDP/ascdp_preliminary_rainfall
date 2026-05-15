@@ -90,36 +90,60 @@ if (!is.null(best_idw_rf)) {
   write.table(metadata, meta_outfile, sep = "\t", row.names = FALSE, quote = FALSE)
   
   # --- START OF MONTHLY TABLE PROCESSING ---
-  # 1. Define monthly file name
-  month_file <- paste0(outDirs[3], "/daily_rainfall_station_AS_", 
-                       format(date, "%Y_%m"), ".csv")
+  # 1. Setup the filename and dynamic URL
+  year_val  <- format(date, "%Y")
+  month_val <- format(date, "%m")
   
-  # 2. Prepare the new day's data
+  month_file_name <- paste0("daily_rainfall_station_AS_", format(date, "%Y_%m"), ".csv")
+  local_path      <- paste0(outDirs[3], "/", month_file_name)
+  
+  url <- paste0("https://api.hcdp.ikewai.org/files/download/ASCDP/production/rainfall/day/partial/station_data/",
+                year_val, "/", month_val, "/", month_file_name)
+  
   col_name <- paste0("X", format(date, "%Y.%m.%d"))
+    
+  # 2. Prepare the new daily data
   new_day_data <- rfSta %>%
     dplyr::select(SKN, total_rf_mm) %>%
+    mutate(SKN = as.character(SKN)) %>%
     dplyr::rename(!!col_name := total_rf_mm)
+  
+  # 3. Try to retrieve the existing file from the API
+  existing_month <- NULL
+
+  download_status <- tryCatch({
+    # Attempt to download the file into the local output directory
+    download.file(url, destfile = local_path, mode = "wb", quiet = TRUE)
+    TRUE
+  }, error = function(e) { FALSE })
+  
+  if (download_status && file.exists(local_path)) {
+    message("File retrieved successfully from API: ", url)
     
-  # 3. Handle the Monthly File (Join to existing or start clean)
-  if (file.exists(month_file)) {
-    existing_month <- read.csv(month_file, check.names = FALSE)
+    # Read the downloaded file
+    existing_month <- read.csv(local_path, check.names = FALSE, stringsAsFactors = FALSE)
+    existing_month$SKN <- as.character(existing_month$SKN)
     
+    # Remove today's column if it somehow exists to prevent duplicates
     if (col_name %in% names(existing_month)) {
-      existing_month[[col_name]] <- NULL
+      existing_month <- existing_month[, names(existing_month) != col_name, drop = FALSE]
     }
     
+    # Join new data to retrieved data
     updated_month <- left_join(existing_month, new_day_data, by = "SKN")
+    
   } else {
-    # Strip out x, y, RF_Mean_Extract, and any old date columns from template
+    message("Could not retrieve file (likely first day of month). Initializing from template.")
+    
+    # Start fresh from the template if download fails
     temp_clean <- temp %>% 
+      mutate(SKN = as.character(SKN)) %>%
       dplyr::select(-matches("total_rf_mm|X[0-9]{4}|x|y|RF_Mean_Extract"))
     
     updated_month <- left_join(temp_clean, new_day_data, by = "SKN")
-    message("Created new monthly file from template.")
   }
-
-  # 4. Final Formatting: Remove unwanted columns, sort, and force NA values
-  # Safety removal of extra columns if they snuck in
+  
+  # 4. Final Formatting: Remove unwanted columns and sort dates
   updated_month <- updated_month %>% 
     dplyr::select(-any_of(c("x", "y", "RF_Mean_Extract")))
   
@@ -128,13 +152,13 @@ if (!is.null(best_idw_rf)) {
   sorted_dates <- date_cols[order(as.Date(gsub("^X", "", date_cols), format = "%Y.%m.%d"))]
   
   final_table <- updated_month[, c(static_cols, sorted_dates)]
-  
-  # Force all empty strings to NA
   final_table[final_table == ""] <- NA
   
-  # 5. Save the CSV with explicit NA strings for IT ingestor
-  write.csv(final_table, month_file, row.names = FALSE, na = "NA")
-  message("Updated existing monthly file (", col_name, " overwritten or added): ", month_file)
+  # 5. Save the final file locally (the IT "upload procedure" will take it from here)
+  write.csv(final_table, local_path, row.names = FALSE, na = "NA")
+  message("Update complete. File saved to: ", local_path, " (Columns: ", ncol(final_table), ")")
+  
+  # --- END OF MONTHLY TABLE PROCESSING ---
     
   # Prepare plot
   png(filename = paste0(outDirs[4],"/as_idw_map_", date_str, ".png")
