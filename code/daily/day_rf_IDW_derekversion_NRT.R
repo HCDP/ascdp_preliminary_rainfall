@@ -94,7 +94,7 @@ if (!is.null(best_idw_rf)) {
   year_val  <- format(date, "%Y")
   month_val <- format(date, "%m")
   
-  month_file_name <- paste0("daily_rainfall_station_AS_", format(date, "%Y_%m"), ".csv")
+  month_file_name <- paste0("rainfall_day_partial_station_data_", format(date, "%Y_%m"), ".csv")
   local_path      <- paste0(outDirs[3], "/", month_file_name)
   
   url <- paste0("https://api.hcdp.ikewai.org/files/download/ASCDP/production/rainfall/day/partial/station_data/",
