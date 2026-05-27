@@ -31,7 +31,7 @@
             "system_id": "ikewai-annotated-data"
         },
         {
-            "local_path": "/workspace/output/as_idw_rf_table_NRT/daily_rainfall_station_AS_%y_%m.csv",
+            "local_path": "/workspace/output/as_idw_rf_table_NRT/rainfall_day_partial_station_data_%y_%m.csv",
             "remote_path": "HCDP/ASCDP/production/rainfall/day/partial/station_data/%y/%m",
             "rename": "rainfall_day_partial_station_data_%y_%m.csv",
             "system_id": "ikewai-annotated-data"

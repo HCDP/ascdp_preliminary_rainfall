@@ -5,7 +5,7 @@
         "retry": 3
     },
     "data": [
-        {   
+        {
             "doc_name": "ascdp_station_value",
             "replace_duplicates": true,
             "data_col_start": 13,
