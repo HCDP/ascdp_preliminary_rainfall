@@ -9,8 +9,8 @@ outDir<-paste0(outputDir,"/as_individual_data")
 
 # --- Configuration ---
 STATION    <- "NSTU" # Pago Pago Airport Station Code
-OUTPUT_CSV <- paste0(outDir,"nws_station_data.csv")
-LOG_FILE   <- paste0(outputDir,"nws_fetch_log/fetch_log.csv")
+OUTPUT_CSV <- paste0(outDir,"/nws_station_data.csv")
+LOG_FILE   <- paste0(outputDir,"/nws_fetch_log/fetch_log.csv")
 
 # Add to existing folder, or create new one if there is none already
 if (!dir.exists(outDir)) {
@@ -21,8 +21,7 @@ if (!dir.exists(outDir)) {
 source(paste0(codeDir,"/as_dataDateFunc.R"))
 dataDate<-dataDateMkr() #function for importing/defining date as input or as yesterday
 currentDate<-dataDate #dataDate as currentDate
-currentDate<-format(as.Date(dataDate +1), "%Y-%m-%d")
-currentDate
+currentDate<-format(as.Date(dataDate -4), "%Y-%m-%d")
 
 log_message <- function(msg, level = "INFO") {
   cat(sprintf("[%s] %s - %s\n", level, Sys.time(), msg), file = LOG_FILE, append = TRUE)
@@ -36,7 +35,7 @@ tryCatch({
   
   # 1. Pull the last 48 hours of raw observation data from the official NOAA API
   # Specifying JSON format makes extraction perfectly clean
-  url <- sprintf("https://aviationweather.gov/api/data/metar?ids=%s&hours=48&format=json", STATION)
+  url <- sprintf("https://aviationweather.gov/api/data/metar?ids=%s&hours=172&format=json", STATION)
   
   # Set a custom user agent as required by NOAA API guidelines to prevent automated blocking
   req <- url(url, headers = c("User-Agent" = "GuamPagoPagoResearchScript/1.0 (contact@yourdomain.com)"))
@@ -79,13 +78,13 @@ tryCatch({
     if (any(!is.na(yesterday_data$pcp24hr))) {
       yesterday_rainfall <- max(yesterday_data$pcp24hr, na.rm = TRUE)
     } else {
-      # If no 24hr value is present, explicitly mark the day as NA
-      yesterday_rainfall <- NA
+      # If no 24hr value is present, explicitly mark the day as 0
+      yesterday_rainfall <- 0
     }
     
     # If max() returns -Inf (all values were NA), it means no rainfall occurred or was logged
     if (is.infinite(yesterday_rainfall)) {
-      yesterday_rainfall <- 0.00
+      yesterday_rainfall <- 0
     }
     log_message(sprintf("Successfully calculated yesterday's rainfall: %s inches", yesterday_rainfall))
     
@@ -106,6 +105,9 @@ tryCatch({
   print(paste("Final Yesterday RF Total (inches):", yesterday_rainfall))
 
 #Make final export table
+# Re-adjust date to be yesterday's date
+outdate<-dataDate #dataDate as currentDate
+
 # Create a clean data frame mirroring your template structure
 output_row <- data.frame(
   station_id   = STATION,
@@ -115,7 +117,7 @@ output_row <- data.frame(
   Elev.m       = 3,
   LAT          = -14.33167,
   LON          = -170.7142,
-  date         = format(as.Date(currentDate), "%m/%d/%Y"), # Converts to mm/dd/yyyy
+  date         = format(as.Date(outdate), "%m/%d/%Y"), # Converts to mm/dd/yyyy
   value        = NA,                                       # Placeholder
   variable     = "precip_mm",
   completeness = 0,                                        # Default to 0 (missing/NA)
@@ -128,10 +130,8 @@ if (!is.na(yesterday_rainfall)) {
   output_row$completeness <- 1                                   # Complete daily record
 }
 
-output_row
-
 #write csv
-output_file <- paste0(outDir,"/as_nws_", gsub("-", "_", currentDate), ".csv")
+output_file <- paste0(outDir,"/as_nws_", gsub("-", "_", outdate), ".csv")
 write.csv(output_row, output_file, row.names = FALSE)
 message("Daily summary with metadata saved to: ", output_file)
 
