@@ -132,6 +132,3 @@ output_row
 output_file <- paste0(outDir,"/as_nws_", gsub("-", "_", currentDate), ".csv")
 write.csv(output_row, output_file, row.names = FALSE)
 message("Daily summary with metadata saved to: ", output_file)
-
-
-#end  
