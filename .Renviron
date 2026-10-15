@@ -1,0 +1,4 @@
+CODE_DIR=F:/PDKE/american_samoa/NRT/ascdp_preliminary_rainfall/code/daily
+DEPENDENCY_DIR=F:/PDKE/american_samoa/NRT/as_daily_rf/as_static_files/
+OUTPUT_DIR=F:/PDKE/american_samoa/NRT/as_daily_rf/
+HCDP_API_TOKEN=99176a4031fd44748867f72751fb9dfd

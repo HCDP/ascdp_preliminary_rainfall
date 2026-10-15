@@ -9,8 +9,8 @@ outDir<-paste0(outputDir,"/as_individual_data")
 
 # --- Configuration ---
 STATION    <- "NSTU" # Pago Pago Airport Station Code
-OUTPUT_CSV <- paste0(outDir,"nws_station_data.csv")
-LOG_FILE   <- paste0(outputDir,"nws_fetch_log/fetch_log.csv")
+OUTPUT_CSV <- paste0(outDir,"/nws_station_data.csv")
+LOG_FILE   <- paste0(outputDir,"/nws_fetch_log/fetch_log.csv")
 
 # Add to existing folder, or create new one if there is none already
 if (!dir.exists(outDir)) {
@@ -21,8 +21,6 @@ if (!dir.exists(outDir)) {
 source(paste0(codeDir,"/as_dataDateFunc.R"))
 dataDate<-dataDateMkr() #function for importing/defining date as input or as yesterday
 currentDate<-dataDate #dataDate as currentDate
-currentDate<-format(as.Date(dataDate +1), "%Y-%m-%d")
-currentDate
 
 log_message <- function(msg, level = "INFO") {
   cat(sprintf("[%s] %s - %s\n", level, Sys.time(), msg), file = LOG_FILE, append = TRUE)

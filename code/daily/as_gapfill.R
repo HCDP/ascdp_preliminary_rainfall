@@ -30,6 +30,7 @@ nFiles=length(Files) #Counts the number of files to be processed
 source(paste0(codeDir,"/as_dataDateFunc.R"))
 dataDate<-dataDateMkr() #function for importing/defining date as input or as yesterday
 currentDate<-dataDate #dataDate as currentDate
+
 file_date<-format(as.Date(currentDate), "%Y%m%d")
 
 #Daily data for gapfilling
@@ -72,6 +73,9 @@ RF_DAY <- cbind(Daily_RF[1],Daily_RF[D])
 RF_DAY
 colnames(RF_DAY)[1] <- "Name"
       
+# Vector to track gapfill status (1 = filled, 0 = observed)
+gapfill_flag <- numeric(N_Sta)
+
       # Station Loop 
       for (S in 1:N_Sta) {
 
@@ -115,21 +119,33 @@ colnames(RF_DAY)[1] <- "Name"
             # Add NR predicted value to Daily time series
             RF_Filled[S,D] <- NR_PRED 
             
+            # Mark station as gapfilled
+            gapfill_flag[S] <- 1
+            
           } #end NR Fill Statement
+        } else {
+          # Station had observed data
+          gapfill_flag[S] <- 0
         } #end missing RF value statement
       } #end station loop
 
-    #wide to long format
-    RF_Filled2<-RF_Filled[c(1,ncol(RF_Filled))] #remove meta columns
-    RF_long<-gather(RF_Filled2, key="date", value="precip_mm", -station_name) #wide to long
+    # Attach gapfill flag vector to RF_Filled dataframe
+    RF_Filled$gapfilled_status <- gapfill_flag
 
+    #Formatting wide table
+    RF_Filled2<-RF_Filled[c(1,ncol(RF_Filled)-1, ncol(RF_Filled))] #remove meta columns
+    # RF_long<-gather(RF_Filled2, key="date", value="precip_mm", -station_name) #wide to long
+    colnames(RF_Filled2) <- c("station_name", "precip_mm", "gapfilled")
+    RF_Filled2
+    
     #format for interpolation input
       #read in template
       temp<-read.csv(paste0(dependencyDir,"/as_rf_idw_input_template.csv"))
-      
-      #add rf values in
-      temp$total_rf_mm <- RF_long$precip_mm[match(temp$Station.Name, RF_long$station_name)]
-      
+
+      # add rf values and gapfilled indicators in
+      temp$total_rf_mm <- RF_Filled2$precip_mm[match(temp$Station.Name, RF_Filled2$station_name)]
+      temp$gapfilled   <- RF_Filled2$gapfilled[match(temp$Station.Name, RF_Filled2$station_name)]
+        
     #write csv
     output_file <- paste0(outDir,"/",file_date, "_as_rf_idw_input_gapfilled.csv")
     write.csv(temp, output_file)

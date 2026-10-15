@@ -6,6 +6,9 @@ library(jsonlite)
 library(dplyr)
 library(lubridate)
 
+# Ensure select always resolves to dplyr
+select <- dplyr::select
+
 #set dirs
 codeDir<-Sys.getenv("CODE_DIR")
 outputDir<-Sys.getenv("OUTPUT_DIR")
@@ -32,6 +35,8 @@ tz_local <- "Pacific/Pago_Pago"
 source(paste0(codeDir,"/as_dataDateFunc.R"))
 dataDate<-dataDateMkr() #function for importing/defining date as input or as yesterday
 currentDate<-dataDate #dataDate as currentDate
+currentDate <- as.Date("2026-10-13")
+currentDate
 
 #set expected daily data points and threshold
 expected <- 288

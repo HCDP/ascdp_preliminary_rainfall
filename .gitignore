@@ -14,3 +14,9 @@ dependencies/**
 **/as_static_files
 **/dependencies
 **/as_idw_rf_*_NRT
+.Rproj.user
+.Rhistory
+.RData
+.httr-oauth
+.DS_Store
+.quarto

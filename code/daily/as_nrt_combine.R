@@ -43,7 +43,10 @@ files <- list.files(
 #define date
 source(paste0(codeDir,"/as_dataDateFunc.R"))
 dataDate<-dataDateMkr() #function for importing/defining date as input or as yesterday
-file_date <-dataDate #dataDate as currentDate
+currentDate <-dataDate #dataDate as currentDate
+
+file_date <- currentDate
+
 
 # USE DATE FUNCTION
 #convert date to YYYYMMDD format
@@ -107,7 +110,7 @@ meso_goal <- meso_combined %>%
   qc_log <- meso_goal %>%
     filter(qc_flag != "OK") %>%
     mutate(date = file_date) %>%
-    select(date, SKN, Station.Name, total_rf_mm, qc_flag, LAT, LON)
+    dplyr::select(date, SKN, Station.Name, total_rf_mm, qc_flag, LAT, LON)
   
   # Only write file if there are flagged rows
   if (nrow(qc_log) > 0) {
