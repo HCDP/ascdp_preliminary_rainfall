@@ -12,6 +12,7 @@ rm(list = ls())#remove all objects in R
 
 #set dirs
 codeDir<-Sys.getenv("CODE_DIR")
+
 outputDir<-Sys.getenv("OUTPUT_DIR")
 dependencyDir<-Sys.getenv("DEPENDENCY_DIR")
 
