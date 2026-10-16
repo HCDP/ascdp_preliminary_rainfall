@@ -16,7 +16,7 @@ outputDir<-Sys.getenv("OUTPUT_DIR")
 dependencyDir<-Sys.getenv("DEPENDENCY_DIR")
 
 inDir <- paste0(outputDir,"/as_gapfilled_data")
-source(paste0(codeDir,"/AS_RF_funcs7.2_NRT.R")) # calls functions code
+source(paste0(codeDir,"/AS_RF_funcs.R")) # calls functions code
 
 # Create output directories if they don't exist
 outDirs <- c(paste0(outputDir, "/as_idw_rf_ras_NRT"), paste0(outputDir,"/as_idw_rf_meta_NRT"), paste0(outputDir,"/as_idw_rf_table_NRT"), paste0(outputDir,"/as_idw_rf_maps_NRT"))
