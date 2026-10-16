@@ -1,7 +1,6 @@
 #load packages
 library(dplyr)
 library(matrixStats)
-library(geosphere)
 library(tidyr)
 
 rm(list = ls())

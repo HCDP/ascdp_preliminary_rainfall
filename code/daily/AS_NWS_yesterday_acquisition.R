@@ -6,15 +6,19 @@ codeDir<-Sys.getenv("CODE_DIR")
 outputDir<-Sys.getenv("OUTPUT_DIR")
 dependencyDir<-Sys.getenv("DEPENDENCY_DIR")
 outDir<-paste0(outputDir,"/as_individual_data")
+logDir<-paste0(outputDir, "/nws_fetch_log")
 
 # --- Configuration ---
 STATION    <- "NSTU" # Pago Pago Airport Station Code
 OUTPUT_CSV <- paste0(outDir,"/nws_station_data.csv")
-LOG_FILE   <- paste0(outputDir,"/nws_fetch_log/fetch_log.csv")
+LOG_FILE   <- paste0(logDir,"/fetch_log.csv")
 
 # Add to existing folder, or create new one if there is none already
 if (!dir.exists(outDir)) {
   dir.create(outDir, recursive = TRUE)
+}
+if (!dir.exists(logDir)) {
+  dir.create(logDir, recursive = TRUE)
 }
 
 #define date
