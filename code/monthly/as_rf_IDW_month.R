@@ -86,6 +86,7 @@ url_params = paste(
 )
 url <- paste("https://api.hcdp.ikewai.org/files/production/retrieve", url_params, sep = "?")
 
+month_file_name <- paste0("rainfall_day_partial_station_data_", year_str, "_", month_str, ".csv")
 temp_table_path <- file.path(tempdir(), month_file_name)
 
 download_status <- tryCatch({
