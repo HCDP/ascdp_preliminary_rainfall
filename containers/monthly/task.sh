@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -u
+set -euo pipefail
 
 echo "[task.sh] [1/4] Starting Execution."
 export TZ="Pacific/Pago_Pago"
