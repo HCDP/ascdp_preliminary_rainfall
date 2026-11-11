@@ -16,9 +16,12 @@ rm(list = ls())
 # ==============================================================================
 # ENVIRONMENT & DIRECTORY SETUP
 # ==============================================================================
-codeDir       <- Sys.getenv("CODE_DIRm")
-outputDir     <- Sys.getenv("OUTPUT_DIRm")
-dependencyDir <- Sys.getenv("DEPENDENCY_DIRm")
+codeDir       <- Sys.getenv("CODE_DIR")
+outputDir     <- Sys.getenv("OUTPUT_DIR")
+dependencyDir <- Sys.getenv("DEPENDENCY_DIR")
+api_token <- Sys.getenv("HCDP_API_TOKEN")
+
+auth_header <- c("Authorization" = paste("Bearer", api_token))
 
 # Source supporting functions
 source(file.path(codeDir, "AS_RF_funcs_month.R"))
@@ -63,6 +66,7 @@ target_date <- dataDateMkr() # e.g., returns 2026-09-01 when run on 2026-10-01
 year_str   <- format(target_date, "%Y")
 month_str  <- format(target_date, "%m")
 date_str   <- format(target_date, "%Y%m")
+iso_date_str <- format(target_date, "%Y-%m-%d")
 
 message("Processing Monthly NRT Rainfall for: ", format(target_date, "%B %Y"))
 
@@ -71,14 +75,21 @@ prism_file    <- file.path(dependencyDir, paste0("PRISM_monthly2/monthly_", mont
 ASmeanRFmonth <- raster(prism_file)
 
 # Dynamic API download URL for the wide partial monthly station table
-month_file_name <- paste0("rainfall_day_partial_station_data_", year_str, "_", month_str, ".csv")
-url <- paste0("https://api.hcdp.ikewai.org/files/download/ASCDP/production/rainfall/day/partial/station_data/",
-              year_str, "/", month_str, "/", month_file_name)
+url_params = paste(
+  "location=american_samoa",
+  "file=station_data",
+  "fill=partial",
+  "datatype=rainfall",
+  "period=day",
+  paste0("date=", iso_date_str),
+  sep = "&"
+)
+url <- paste("https://api.hcdp.ikewai.org/files/production/retrieve", url_params, sep = "?")
 
 temp_table_path <- file.path(tempdir(), month_file_name)
 
 download_status <- tryCatch({
-  download.file(url, destfile = temp_table_path, mode = "wb", quiet = TRUE)
+  download.file(url, destfile = temp_table_path, mode = "wb", quiet = TRUE, method = "libcurl", headers = auth_header)
   TRUE
 }, error = function(e) { FALSE })
 
@@ -231,8 +242,17 @@ if (!is.null(best_idw_rf)) {
   local_path_year  <- file.path(table_dir, yearly_file_name)
   
   # HCDP API URL structure for month/partial station data
-  url_year <- paste0("https://api.hcdp.ikewai.org/files/download/ASCDP/production/rainfall/month/partial/station_data/",
-                     year_val, "/", yearly_file_name)
+
+  url_params = paste(
+    "location=american_samoa",
+    "file=station_data",
+    "fill=partial",
+    "datatype=rainfall",
+    "period=month",
+    paste0("date=", iso_date_str),
+    sep = "&"
+  )
+  url_year <- paste("https://api.hcdp.ikewai.org/files/production/retrieve", url_params, sep = "?")
   
   # Monthly column naming format: XYYYY.MM
   col_name_month <- paste0("X", format(currentDate, "%Y.%m"))
@@ -245,7 +265,7 @@ if (!is.null(best_idw_rf)) {
   
   # Download existing yearly file if present on server
   download_status_year <- tryCatch({
-    download.file(url_year, destfile = local_path_year, mode = "wb", quiet = TRUE)
+    download.file(url_year, destfile = local_path_year, mode = "wb", quiet = TRUE, method = "libcurl", headers = auth_header)
     TRUE
   }, error = function(e) { FALSE })
   

@@ -14,6 +14,9 @@ rm(list = ls())#remove all objects in R
 codeDir<-Sys.getenv("CODE_DIR")
 outputDir<-Sys.getenv("OUTPUT_DIR")
 dependencyDir<-Sys.getenv("DEPENDENCY_DIR")
+api_token <- Sys.getenv("HCDP_API_TOKEN")
+
+auth_header <- c("Authorization" = paste("Bearer", api_token))
 
 inDir <- paste0(outputDir,"/as_gapfilled_data")
 source(paste0(codeDir,"/AS_RF_funcs.R")) # calls functions code
@@ -132,12 +135,21 @@ if (!is.null(best_idw_rf)) {
   # 1. Setup the filename and dynamic URL
   year_val  <- format(currentDate, "%Y")
   month_val <- format(currentDate, "%m")
+  iso_date_str <- format(currentDate, "%Y-%m-%d")
   
   month_file_name <- paste0("rainfall_day_partial_station_data_", format(currentDate, "%Y_%m"), ".csv")
   local_path      <- paste0(outDirs[3], "/", month_file_name)
   
-  url <- paste0("https://api.hcdp.ikewai.org/files/download/ASCDP/production/rainfall/day/partial/station_data/",
-                year_val, "/", month_val, "/", month_file_name)
+  url_params = paste(
+  "location=american_samoa",
+  "file=station_data",
+  "fill=partial",
+  "datatype=rainfall",
+  "period=day",
+  paste0("date=", iso_date_str),
+  sep = "&"
+)
+url <- paste("https://api.hcdp.ikewai.org/files/production/retrieve", url_params, sep = "?")
   
   col_name <- paste0("X", format(currentDate, "%Y.%m.%d"))
   
@@ -152,7 +164,7 @@ if (!is.null(best_idw_rf)) {
   
   download_status <- tryCatch({
     # Attempt to download the file into the local output directory
-    download.file(url, destfile = local_path, mode = "wb", quiet = TRUE)
+    download.file(url, destfile = local_path, mode = "wb", quiet = TRUE, method = "libcurl", headers = auth_header)
     TRUE
   }, error = function(e) { FALSE })
   

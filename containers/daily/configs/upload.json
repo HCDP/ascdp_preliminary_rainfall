@@ -15,7 +15,7 @@
 	[
         {
             "local_path": "/workspace/output",
-            "remote_path": "HCDP/ASCDP/workflow_data/preliminary/rainfall/outputs/%y/%m/%d",
+            "remote_path": "HCDP/ASCDP/workflow_data/preliminary/rainfall/outputs/day/%y/%m/%d",
             "system_id": "ikewai-annotated-data"
         },
         {

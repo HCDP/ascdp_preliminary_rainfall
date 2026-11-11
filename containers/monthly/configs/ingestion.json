@@ -1,0 +1,28 @@
+{
+    "tapis_config": {
+        "tenant_url": "https://agaveauth.its.hawaii.edu",
+        "hcdp_api_url": "https://api.hcdp.ikewai.org",
+        "retry": 3
+    },
+    "data": [
+        {
+            "doc_name": "ascdp_station_value",
+            "replace_duplicates": true,
+            "data_col_start": 13,
+            "id_col": 0,
+            "nodata": "NA",
+            "datatype": "rainfall",
+            "period": "month",
+            "start_date": "%y-%m", 
+            "end_date": "%y-%m",
+            "fill": "partial",
+            "additional_properties": {
+                "location": "american_samoa"
+            },
+            "additional_key_properties": [],
+            "files": [
+                "https://api.hcdp.ikewai.org/files/download/ASCDP/production/rainfall/month/partial/station_data/%y/rainfall_month_partial_station_data_%y.csv"
+            ]
+        }
+    ]
+}
