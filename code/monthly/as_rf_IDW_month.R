@@ -66,8 +66,7 @@ target_date <- dataDateMkr() # e.g., returns 2026-09-01 when run on 2026-10-01
 year_str   <- format(target_date, "%Y")
 month_str  <- format(target_date, "%m")
 date_str   <- format(target_date, "%Y%m")
-iso_date_str_day <- format(target_date, "%Y-%m-%d")
-iso_date_str_month <- format(target_date, "%Y-%m")
+iso_date_str <- format(target_date, "%Y-%m")
 
 message("Processing Monthly NRT Rainfall for: ", format(target_date, "%B %Y"))
 
@@ -82,7 +81,7 @@ url_params = paste(
   "fill=partial",
   "datatype=rainfall",
   "period=day",
-  paste0("date=", iso_date_str_day),
+  paste0("date=", iso_date_str),
   sep = "&"
 )
 url <- paste("https://api.hcdp.ikewai.org/files/production/retrieve", url_params, sep = "?")
@@ -251,7 +250,7 @@ if (!is.null(best_idw_rf)) {
     "fill=partial",
     "datatype=rainfall",
     "period=month",
-    paste0("date=", iso_date_str_month),
+    paste0("date=", iso_date_str),
     sep = "&"
   )
   url_year <- paste("https://api.hcdp.ikewai.org/files/production/retrieve", url_params, sep = "?")
