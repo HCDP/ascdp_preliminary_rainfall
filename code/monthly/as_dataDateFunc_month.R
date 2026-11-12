@@ -7,11 +7,9 @@ dataDateMkr <- function(dateVar = NA) {
   } else if (!is.na(dateVar)) {
     as.Date(dateVar)
   } else {
-    Sys.Date() - 1 # Defaults to yesterday
+    # Defaults to first of last month
+    floor_date(Sys.Date(), "month") %m-% months(1)
   }
-  
-  # 2. Convert the reference date to the 1st day of the PREVIOUS month
-  target_month_date <- floor_date(ref_date, "month") %m-% months(1)
   
   return(target_month_date)
 }
