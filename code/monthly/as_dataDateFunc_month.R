@@ -11,5 +11,5 @@ dataDateMkr <- function(dateVar = NA) {
     floor_date(Sys.Date(), "month") %m-% months(1)
   }
   
-  return(target_month_date)
+  return(ref_date)
 }
